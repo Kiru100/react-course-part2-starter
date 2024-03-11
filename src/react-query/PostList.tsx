@@ -1,35 +1,38 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-
-interface Post {
-  id: number;
-  title: string;
-  body: string;
-  userId: number;
-}
+import React, { useState } from 'react';
+import usePosts from './hooks/usePosts';
 
 const PostList = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [error, setError] = useState('');
+	const pageSize = 10; 
+  	const { data, error, isLoading, fetchNextPage, isFetchingNextPage } = usePosts({
+		pageSize
+	});
 
-  useEffect(() => {
-    axios
-      .get('https://jsonplaceholder.typicode.com/posts')
-      .then((res) => setPosts(res.data))
-      .catch((error) => setError(error));
-  }, []);
+	if (isLoading) return <p>Loading...</p>
+	if (error) return <p>{error.message}</p>;
 
-  if (error) return <p>{error}</p>;
-
-  return (
-    <ul className="list-group">
-      {posts.map((post) => (
-        <li key={post.id} className="list-group-item">
-          {post.title}
-        </li>
-      ))}
-    </ul>
-  );
+	return (
+			<>
+				<ul className="list-group">
+					{data.pages.map((page, index)=>
+						<React.Fragment key={index}>
+							{
+								page.map((post) => (
+									<li key={post.id} className="list-group-item">
+									{post.title}
+									</li>
+								))
+							}
+						</React.Fragment>
+						)
+					}
+				</ul>
+				<button 
+					className="btn btn-primary my-3 ms-1"
+					disabled={isFetchingNextPage}
+					onClick={()=> fetchNextPage()}
+				>Load More</button>
+			</>
+	);
 };
 
 export default PostList;
