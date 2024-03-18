@@ -1,4 +1,6 @@
-const UserListPage = () => {
+import { Link } from "react-router-dom";
+
+const UserList = () => {
   const users = [
     { id: 1, name: 'Mosh' },
     { id: 2, name: 'John' },
@@ -8,11 +10,11 @@ const UserListPage = () => {
     <ul className="list-group">
       {users.map((user) => (
         <li className="list-group-item" key={user.id}>
-          <a href="#">{user.name}</a>
+          <Link to={`/users/${user.id}`}>{user.name}</Link>
         </li>
       ))}
     </ul>
   );
 };
 
-export default UserListPage;
+export default UserList;
